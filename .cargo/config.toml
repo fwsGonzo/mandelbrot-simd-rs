@@ -1,0 +1,2 @@
+[build]
+rustflags = ["-C", "target-cpu=native", "-C", "link-args=-Tlinker.ld", "-C", "link_args=-Wl,--undefined=my_backend"]

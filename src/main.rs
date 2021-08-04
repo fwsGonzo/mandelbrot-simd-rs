@@ -1,14 +1,16 @@
-extern crate packed_simd;
+#![feature(asm)]
+extern crate packed_simd_2;
+mod api;
 
-use packed_simd::*;
-use std::path::Path;
-use std::fs::File;
+use packed_simd_2::*;
 use std::io::BufWriter;
 
-fn main() {
-    const IMG_WIDTH: i32 = 1024;
-    const IMG_HEIGHT: i32 = 1024;
-    let max_iterations = 32;
+#[no_mangle]
+pub extern fn my_backend()
+{
+    const IMG_WIDTH: i32 = 512;
+    const IMG_HEIGHT: i32 = 512;
+    let max_iterations = 1200;
     let cmin_r: f32 = -2.0;
     let cmax_r: f32 = 1.0;
     let cmin_i: f32 = -1.5;
@@ -70,18 +72,18 @@ fn main() {
         }
     }
 
-    let path = Path::new(r"image.png");
-    let file = File::create(path).unwrap();
-    let bufw = &mut BufWriter::new(file);
-    
-    let mut encoder = png::Encoder::new(bufw, IMG_WIDTH as u32, IMG_WIDTH as u32);
-    encoder.set_depth(png::BitDepth::Eight);
-    encoder.set_color(png::ColorType::RGB);
-    let mut writer = encoder.write_header().unwrap();
-    writer.write_image_data(&image).unwrap();
+    let mut bufwriter = BufWriter::new(Vec::new());
+    {
+        let mut encoder = png::Encoder::new(&mut bufwriter, IMG_WIDTH as u32, IMG_WIDTH as u32);
+        encoder.set_depth(png::BitDepth::Eight);
+        encoder.set_color(png::ColorType::RGB);
+        let mut writer = encoder.write_header().unwrap();
+        writer.write_image_data(&image).unwrap();
+    }
+    api::backend_response("image/png",
+        &bufwriter.into_inner().expect(""));
 }
 
-#[test]
-fn test_main() {
-    main();
+fn main() {
+    //my_backend()
 }
