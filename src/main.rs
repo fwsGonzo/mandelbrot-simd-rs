@@ -8,9 +8,9 @@ use std::io::BufWriter;
 #[no_mangle]
 pub extern fn my_backend()
 {
-    const IMG_WIDTH: i32 = 512;
-    const IMG_HEIGHT: i32 = 512;
-    let max_iterations = 1200;
+    const IMG_WIDTH: i32 = 1024;
+    const IMG_HEIGHT: i32 = 1024;
+    let max_iterations = 32;
     let cmin_r: f32 = -2.0;
     let cmax_r: f32 = 1.0;
     let cmin_i: f32 = -1.5;
